@@ -74,5 +74,17 @@
     {% endblock page_after_footer %}
 </article>
 
+<div id="comment-section"></div>
+
+<script>
+initComments({
+  node: document.getElementById("comment-section"),
+  defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+  serverName: "cactus.chat",
+  siteName: "dandellion-xyz",
+  commentSectionId: "{{ page.title | base64_encode }}"
+})
+</script>
+
 {% endblock content %}
 
