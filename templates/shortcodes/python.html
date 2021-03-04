@@ -1,0 +1,78 @@
+<div>
+
+<div><pre><code contenteditable="true" class="input">{{ body | safe }}</code></pre></div>
+
+<p>Run python script via webassembly (Might take a long time and use a lot of mobile data!): <button onClick="run(this)">Run</button></p>
+
+<script type="text/javascript">
+
+    function run(source) {
+        window.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.16.1/full/';
+        getScript("https://cdn.jsdelivr.net/pyodide/v0.16.1/full/pyodide.js", function() {
+            // Adapted from https://github.com/mfripp response to https://github.com/iodide-project/pyodide/issues/8
+            function runPython(elem) {
+                languagePluginLoader.then(() => {
+                    var setup_code = `
+import sys, io, traceback
+namespace = {}  # use separate namespace to hide run_code, modules, etc.
+def run_code(code):
+  """run specified code and return stdout and stderr"""
+  out = io.StringIO()
+  oldout = sys.stdout
+  olderr = sys.stderr
+  sys.stdout = sys.stderr = out
+  try:
+      # change next line to exec(code, {}) if you want to clear vars each time
+      exec(code, namespace)
+  except:
+      traceback.print_exc()
+
+  sys.stdout = oldout
+  sys.stderr = olderr
+  return out.getvalue()
+`
+                    pyodide.runPythonAsync(setup_code)
+
+                    var code = elem.parentNode.parentNode.querySelector(".input").innerText;
+                    pyodide.globals.code_to_run = code;
+
+                    pyodide.runPythonAsync("run_code(code_to_run)")
+                            .then(output => outputStuff(elem, output))
+                            .catch((err) => { outputStuff(elem, err) })
+                });
+            };
+
+            runPython(source)
+
+        })
+    }
+
+    function getScript(source, callback) {
+        var script = document.createElement('script');
+        var prior = document.getElementsByTagName('script')[0];
+        script.async = 1;
+
+        script.onload = script.onreadystatechange = function( _, isAbort ) {
+            if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
+                script.onload = script.onreadystatechange = null;
+                script = undefined;
+
+                if(!isAbort && callback) setTimeout(callback, 0);
+            }
+        };
+
+        script.src = source;
+        prior.parentNode.insertBefore(script, prior);
+    }
+
+    function outputStuff(elem, s) {
+        var output = elem.parentNode.parentNode.querySelector(".output");
+        
+        output.innerHTML = s;
+        output.style.display = "block";
+    };
+</script>
+
+<div class="output" style="background-color: black; color: #FFFFFF; white-space: pre-line; display: none">a</div>
+
+</div>
