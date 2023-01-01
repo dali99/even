@@ -62,7 +62,7 @@
               <ul class="mobile-menu-list">
                 {% for item in config.extra.even_menu %}
                     <li class="mobile-menu-item">
-                        <a href="{{ item.url | replace(from="$BASE_URL", to=config.base_url) }}">
+                        <a href="{{ item.url | replace(from="$BASE_URL", to=config.base_url) | safe }}">
                             {{ item.name }}
                         </a>
                     </li>
@@ -71,12 +71,12 @@
             </nav>
 
             <header id="header">
-                <div class="logo"><a href="{{ config.base_url }}">{{ config.extra.even_title }}</a></div>
+                <div class="logo"><a href="{{ config.base_url | safe }}">{{ config.extra.even_title }}</a></div>
                 <nav class="menu">
                     <ul>
                         {% for item in config.extra.even_menu %}
                             <li>
-                                <a href="{{ item.url | replace(from="$BASE_URL", to=config.base_url) }}">
+                                <a href="{{ item.url | replace(from="$BASE_URL", to=config.base_url) | safe }}">
                                     {{ item.name }}
                                 </a>
                             </li>
