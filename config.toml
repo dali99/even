@@ -24,3 +24,4 @@ even_menu = [
 ]
 
 even_title = "Even"
+semweb_prefixes = []
