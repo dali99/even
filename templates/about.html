@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 
 {% block content %}
-    <div class="about">
+    <div class="about" about={{ page.extra.semweb_about | safe }} {% block rdfprefix %}{% for prefix in page.extra.semweb_prefixes %}xmlns:{{prefix.name}}="{{prefix.href | safe}}"{% endfor %}{% endblock rdfprefix%}>
         {{ page.content | safe }}
     </div>
 {% endblock content %}
